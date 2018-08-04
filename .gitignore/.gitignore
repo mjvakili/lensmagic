@@ -1,0 +1,5 @@
+*.h5
+*.pdf
+*.pyc
+*hdf5
+*.fits
