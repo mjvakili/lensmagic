@@ -21,9 +21,12 @@ centers = np.loadtxt("centers.txt")
 labels_random_jk = kmeans_radec.find_nearest(coord_rand_jk, centers)
 
 lens_file_jk = h5py.File("LRG_dense_jk.h5")
-lens_z_jk = lens_file_jk["redshift"][:]
-lens_ra_jk = lens_file_jk["RA"][:]
-lens_dec_jk = lens_file_jk["DEC"][:]
+dense_jk_mask = h5py.File("dense_jk_mask.h5")
+dense_mask = dense_jk_mask["mask"][:]
+dense_jk_mask.close()
+lens_z_jk = lens_file_jk["redshift"][dense_mask]
+lens_ra_jk = lens_file_jk["RA"][dense_mask]
+lens_dec_jk = lens_file_jk["DEC"][dense_mask]
 lens_file_jk.close()    
 coord_lens_jk = np.vstack([lens_ra_jk, lens_dec_jk]).T 
 centers = np.loadtxt("centers.txt")
@@ -32,19 +35,22 @@ labels_lens_jk = kmeans_radec.find_nearest(coord_lens_jk, centers)
 random_ra = random_coord[:,0]
 random_dec = random_coord[:,1]
 random_file.close()
-shuffled = np.random.choice(len(random_ra) , 2000000)
-random_coord = random_coord[shuffled]
+#shuffled = np.random.choice(len(random_ra) , 2000000)
+#random_coord = random_coord[shuffled]
 random_ra = random_coord[:,0]
 random_dec = random_coord[:,1]
 
 source_file = h5py.File("source_zb_0.4_0.9.h5")
-source_ra = source_file["ra"][:]
-source_dec = source_file["dec"][:]
-source_z = source_file["zb"][:]
-source_e1 = source_file["e1"][:]
-source_e2 = source_file["e2"][:]
-source_w = source_file["w"][:]
-source_size = source_file["snr"][:]
+source_jk_mask = h5py.File("source_mask_zb_0.4_0.9.h5")
+source_mask = source_jk_mask["mask"][:]
+source_jk_mask.close()
+source_ra = source_file["ra"][source_mask]
+source_dec = source_file["dec"][source_mask]
+source_z = source_file["zb"][source_mask]
+source_e1 = source_file["e1"][source_mask]
+source_e2 = source_file["e2"][source_mask]
+source_w = source_file["w"][source_mask]
+source_size = source_file["snr"][source_mask]
 source_file.close()
 
 coord_source_jk = np.vstack([source_ra, source_dec]).T 
